@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/spring-token-authentication.iml" filepath="$PROJECT_DIR$/spring-token-authentication.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sta-api/sta-api.iml" filepath="$PROJECT_DIR$/sta-api/sta-api.iml" />
     </modules>
   </component>
 </project>
