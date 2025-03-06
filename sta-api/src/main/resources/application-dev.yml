@@ -12,6 +12,6 @@ ACTIVE_PROFILE: dev
 #Email Config
 EMAIL_HOST: smtp.gmail.com
 EMAIL_PORT: 587
-EMAIL_ID: test@gmail.com
-EMAIL_PASSWORD: test1234
-VERIFY_EMAIL_HOST: http://locahost:8085
+EMAIL_ID:
+EMAIL_PASSWORD:
+VERIFY_EMAIL_HOST: http://localhost:8085
