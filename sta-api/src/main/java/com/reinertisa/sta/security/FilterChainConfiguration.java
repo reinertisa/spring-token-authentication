@@ -35,25 +35,32 @@ public class FilterChainConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        return new ProviderManager(daoAuthenticationProvider);
+        MyOwnAuthenticationProvider myOwnAuthenticationProvider = new MyOwnAuthenticationProvider(userDetailsService);
+        return new ProviderManager(myOwnAuthenticationProvider);
     }
 
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        var user1 = User.withDefaultPasswordEncoder()
+//                .username("bilirkishi")
+//                .password("{noop}letmein")
+//                .roles("USER")
+//                .build();
+//
+//        var user2 = User.withDefaultPasswordEncoder()
+//                .username("bulgurcu")
+//                .password("{noop}letmein")
+//                .roles("USER")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(List.of(user1, user2));
+//    }
+
     @Bean
-    public UserDetailsService userDetailsService() {
-        var user1 = User.withDefaultPasswordEncoder()
-                .username("bilirkishi")
-                .password("letmein")
-                .roles("USER")
-                .build();
-
-        var user2 = User.withDefaultPasswordEncoder()
-                .username("bulgurcu")
-                .password("letmein")
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(List.of(user1, user2));
+    public UserDetailsService inMemoryUserDetailsManager() {
+        return new InMemoryUserDetailsManager(
+                User.withUsername("bilirkishi").password("letmein").roles("USER").build(),
+                User.withUsername("bulgurcu").password("letmein").roles("USER").build()
+        );
     }
 }
