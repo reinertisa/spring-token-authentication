@@ -19,7 +19,8 @@ public class MyOwnAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         var user = (UsernamePasswordAuthenticationToken) authentication;
         var userFromDb = userDetailsService.loadUserByUsername((String)user.getPrincipal());
-        if (((String)user.getCredentials()).equals(userFromDb.getPassword())) {
+        var password = (String)user.getCredentials();
+        if (password.equals(userFromDb.getPassword())) {
             return UsernamePasswordAuthenticationToken.authenticated(userFromDb, "[PASSWORD PROTECTED]", userFromDb.getAuthorities());
         }
         throw new BadCredentialsException("Unable to login");
