@@ -60,7 +60,7 @@ public abstract class Auditable {
     public void beforeUpdate() {
         var userId = 0L; // RequestContext.getUserId();
 //        if (userId == null) {
-//            throw new ApiException("Cannot updated entity without user ID in Request Context for this thread");
+//            throw new ApiException("Cannot update entity without user ID in Request Context for this thread");
 //        }
         setUpdatedAt(LocalDateTime.now());
         setUpdatedBy(userId);
