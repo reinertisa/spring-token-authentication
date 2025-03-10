@@ -32,12 +32,12 @@ import static com.reinertisa.sta.utils.RequestUtils.handleErrorResponse;
 import static org.springframework.http.HttpMethod.POST;
 
 @Slf4j
-public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class ApiAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private final UserService userService;
     private final JwtService jwtService;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager,
-                                UserService userService, JwtService jwtService) {
+    public ApiAuthenticationFilter(AuthenticationManager authenticationManager,
+                                   UserService userService, JwtService jwtService) {
         super(new AntPathRequestMatcher(LOGIN_PATH, POST.name()), authenticationManager);
         this.userService = userService;
         this.jwtService = jwtService;
