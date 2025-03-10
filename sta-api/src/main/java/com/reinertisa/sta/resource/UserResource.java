@@ -37,6 +37,7 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account verified.", OK));
     }
 
+
     private URI getUri() {
         return URI.create("");
     }
