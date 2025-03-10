@@ -1,11 +1,15 @@
 package com.reinertisa.sta.service.impl;
 
+import com.reinertisa.sta.cache.CacheStore;
+import com.reinertisa.sta.domain.RequestContext;
+import com.reinertisa.sta.dto.User;
 import com.reinertisa.sta.entity.ConfirmationEntity;
 import com.reinertisa.sta.entity.CredentialEntity;
 import com.reinertisa.sta.entity.RoleEntity;
 import com.reinertisa.sta.entity.UserEntity;
 import com.reinertisa.sta.enumaration.Authority;
 import com.reinertisa.sta.enumaration.EventType;
+import com.reinertisa.sta.enumaration.LoginType;
 import com.reinertisa.sta.event.UserEvent;
 import com.reinertisa.sta.exception.ApiException;
 import com.reinertisa.sta.repository.ConfirmationRepository;
@@ -19,10 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.reinertisa.sta.utils.UserUtils.createUserEntity;
+import static com.reinertisa.sta.utils.UserUtils.fromUserEntity;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -34,6 +40,7 @@ public class UserServiceImpl implements UserService {
     private final CredentialRepository credentialRepository;
     private final ConfirmationRepository confirmationRepository;
 //    private final BCryptPasswordEncoder encoder;
+    private final CacheStore<String, Integer> userCache;
     private final ApplicationEventPublisher publisher;
 
 
@@ -62,6 +69,51 @@ public class UserServiceImpl implements UserService {
         confirmationRepository.delete(confirmationEntity);
     }
 
+    @Override
+    public void updateLoginAttempt(String email, LoginType loginType) {
+        var userEntity = getUserEntityByEmail(email);
+        RequestContext.setUserId(userEntity.getId());
+        switch (loginType) {
+            case LoginType.LOGIN_ATTEMPT -> {
+                if (userCache.get(userEntity.getEmail()) == null) {
+                    userEntity.setLoginAttempts(0);
+                    userEntity.setAccountNonLocked(true);
+                }
+                userEntity.setLoginAttempts(userEntity.getLoginAttempts() + 1);
+                userCache.put(userEntity.getEmail(), userEntity.getLoginAttempts());
+                if (userCache.get(userEntity.getEmail()) > 5) {
+                    userEntity.setAccountNonLocked(false);
+                }
+            }
+            case LOGIN_SUCCESS -> {
+                userEntity.setAccountNonLocked(true);
+                userEntity.setLoginAttempts(0);
+                userEntity.setLastLogin(LocalDateTime.now());
+                userCache.evict(userEntity.getEmail());
+            }
+        }
+        userRepository.save(userEntity);
+    }
+
+    @Override
+    public User getUserByUserId(String userId) {
+        var userEntity = userRepository.findUserByUserId(userId)
+                .orElseThrow(() -> new ApiException("User not found"));
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        UserEntity userEntity = getUserEntityByEmail(email);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    @Override
+    public CredentialEntity getUserCredentialById(Long userId) {
+        var credentialById = credentialRepository.getCredentialByUserEntityId(userId);
+        return credentialById.orElseThrow(() -> new ApiException("Unable to find user credentials"));
+    }
+
     private UserEntity getUserEntityByEmail(String email) {
         var userByEmail = userRepository.findByEmailIgnoreCase(email);
         return userByEmail.orElseThrow(() -> new ApiException("User not found"));
@@ -75,4 +127,6 @@ public class UserServiceImpl implements UserService {
         RoleEntity role = getRoleName(Authority.USER.name());
         return createUserEntity(firstName, lastName, email, role);
     }
+
+
 }
