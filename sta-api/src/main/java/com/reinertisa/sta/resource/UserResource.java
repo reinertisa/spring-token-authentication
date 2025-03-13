@@ -1,15 +1,18 @@
 package com.reinertisa.sta.resource;
 
 import com.reinertisa.sta.domain.Response;
+import com.reinertisa.sta.dto.User;
 import com.reinertisa.sta.dtorequest.UserRequest;
 import com.reinertisa.sta.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Map;
 
 import static com.reinertisa.sta.utils.RequestUtils.getResponse;
 import static java.util.Collections.emptyMap;
@@ -37,6 +40,18 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account verified.", OK));
     }
 
+    @PatchMapping("/mfa/setup")
+    public ResponseEntity<Response> setupMfa(@AuthenticationPrincipal User userPrincipal, HttpServletRequest request) {
+        User user = userService.setUpMfa(userPrincipal.getId());
+        return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "MFA set up successfully.", OK));
+    }
+
+    @PatchMapping("/mfa/cancel")
+    public ResponseEntity<Response> cancelMfa(@AuthenticationPrincipal User userPrincipal, HttpServletRequest request) {
+        User user = userService.cancelMfa(userPrincipal.getId());
+        return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "MFA canceled successfully.", OK));
+
+    }
 
     private URI getUri() {
         return URI.create("");

@@ -115,6 +115,16 @@ public class UserServiceImpl implements UserService {
         return credentialById.orElseThrow(() -> new ApiException("Unable to find user credentials"));
     }
 
+    @Override
+    public User setUpMfa(Long id) {
+
+    }
+
+    @Override
+    public User cancelMfa(Long id) {
+
+    }
+
     private UserEntity getUserEntityByEmail(String email) {
         var userByEmail = userRepository.findByEmailIgnoreCase(email);
         return userByEmail.orElseThrow(() -> new ApiException("User not found"));
