@@ -4,6 +4,8 @@ import com.reinertisa.sta.dto.User;
 import com.reinertisa.sta.entity.CredentialEntity;
 import com.reinertisa.sta.entity.RoleEntity;
 import com.reinertisa.sta.enumaration.LoginType;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 
 public interface UserService {
     void createUser(String firstName, String lastName, String email, String password);
@@ -16,4 +18,5 @@ public interface UserService {
     User setUpMfa(Long id);
     User cancelMfa(Long id);
     User verifyQrCode(String userId, String qrCode);
+    void resetPassword(@NotEmpty(message = "Email cannot be empty or null") @Email(message = "Invalid email address") String email);
 }

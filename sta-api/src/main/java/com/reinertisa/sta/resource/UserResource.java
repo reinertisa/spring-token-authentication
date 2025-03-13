@@ -2,6 +2,7 @@ package com.reinertisa.sta.resource;
 
 import com.reinertisa.sta.domain.Response;
 import com.reinertisa.sta.dto.User;
+import com.reinertisa.sta.dtorequest.EmailRequest;
 import com.reinertisa.sta.dtorequest.QrCodeRequest;
 import com.reinertisa.sta.dtorequest.UserRequest;
 import com.reinertisa.sta.enumaration.TokenType;
@@ -63,6 +64,13 @@ public class UserResource {
         jwtService.addCookie(response, user, TokenType.ACCESS);
         jwtService.addCookie(response, user, TokenType.REFRESH);
         return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "QR code verified.", OK));
+    }
+
+    // Reset password when not logged in
+    @PostMapping("/resetpassword")
+    public ResponseEntity<Response> resetPassword(@RequestBody @Valid EmailRequest emailRequest, HttpServletRequest request) {
+        userService.resetPassword(emailRequest.getEmail());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "We sent you an email to reset your password.", OK));
     }
 
     private URI getUri() {

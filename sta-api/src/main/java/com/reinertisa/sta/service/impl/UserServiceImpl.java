@@ -150,6 +150,20 @@ public class UserServiceImpl implements UserService {
         return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
     }
 
+    @Override
+    public void resetPassword(String email) {
+        UserEntity user = getUserEntityByEmail(email);
+        ConfirmationEntity confirmation = getUserConfirmation(user);
+        if (confirmation != null) {
+            // send existing confirmation
+            publisher.publishEvent(new UserEvent(user, EventType.RESET_PASSWORD, Map.of("key", confirmation.getKey())));
+        } else {
+            ConfirmationEntity confirmationEntity = new ConfirmationEntity(user);
+            confirmationRepository.save(confirmationEntity);
+            publisher.publishEvent(new UserEvent(user, EventType.RESET_PASSWORD, Map.of("key", confirmationEntity.getKey())));
+        }
+    }
+
     private boolean verifyCode(String qrCode, String qrCodeSecret) {
         TimeProvider timeProvider = new SystemTimeProvider();
         CodeGenerator codeGenerator = new DefaultCodeGenerator();
@@ -178,6 +192,10 @@ public class UserServiceImpl implements UserService {
 
     private ConfirmationEntity getUserConfirmation(String key) {
         return confirmationRepository.findByKey(key).orElseThrow(() -> new ApiException("Confirmation key not found"));
+    }
+
+    private ConfirmationEntity getUserConfirmation(UserEntity user) {
+        return confirmationRepository.findByUserEntity(user).orElse(null);
     }
 
     private UserEntity createNewUser(String firstName, String lastName, String email) {
