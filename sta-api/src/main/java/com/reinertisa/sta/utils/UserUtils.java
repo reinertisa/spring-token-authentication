@@ -65,7 +65,7 @@ public class UserUtils {
                     .label(email)
                     .secret(qrCodeSecret)
                     .algorithm(HashingAlgorithm.SHA1)
-                    .digits(8)
+                    .digits(6)
                     .period(30)
                     .build();
 

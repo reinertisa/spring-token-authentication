@@ -15,4 +15,5 @@ public interface UserService {
     CredentialEntity getUserCredentialById(Long id);
     User setUpMfa(Long id);
     User cancelMfa(Long id);
+    User verifyQrCode(String userId, String qrCode);
 }

@@ -2,9 +2,13 @@ package com.reinertisa.sta.resource;
 
 import com.reinertisa.sta.domain.Response;
 import com.reinertisa.sta.dto.User;
+import com.reinertisa.sta.dtorequest.QrCodeRequest;
 import com.reinertisa.sta.dtorequest.UserRequest;
+import com.reinertisa.sta.enumaration.TokenType;
+import com.reinertisa.sta.service.JwtService;
 import com.reinertisa.sta.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class UserResource {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     public ResponseEntity<Response> saveUser(@RequestBody @Valid UserRequest user, HttpServletRequest request) {
@@ -50,7 +55,14 @@ public class UserResource {
     public ResponseEntity<Response> cancelMfa(@AuthenticationPrincipal User userPrincipal, HttpServletRequest request) {
         User user = userService.cancelMfa(userPrincipal.getId());
         return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "MFA canceled successfully.", OK));
+    }
 
+    @PostMapping("/verify/qrcode")
+    public ResponseEntity<Response> verifyQrCode(@RequestBody QrCodeRequest qrCodeRequest, HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.verifyQrCode(qrCodeRequest.getUserId(), qrCodeRequest.getQrCode());
+        jwtService.addCookie(response, user, TokenType.ACCESS);
+        jwtService.addCookie(response, user, TokenType.REFRESH);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "QR code verified.", OK));
     }
 
     private URI getUri() {
