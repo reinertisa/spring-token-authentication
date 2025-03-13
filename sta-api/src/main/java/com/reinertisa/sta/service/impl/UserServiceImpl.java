@@ -20,6 +20,7 @@ import com.reinertisa.sta.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.reinertisa.sta.utils.UserUtils.createUserEntity;
-import static com.reinertisa.sta.utils.UserUtils.fromUserEntity;
+import static com.reinertisa.sta.utils.UserUtils.*;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -117,12 +117,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User setUpMfa(Long id) {
-
+        UserEntity userEntity = getUserEntityById(id);
+        String codeSecret = qrCodeSecret.get();
+        userEntity.setQrCodeImageUri(qrCodeImageUri.apply(userEntity.getEmail(), codeSecret));
+        userEntity.setQrCodeSecret(codeSecret);
+        userEntity.setMfa(true);
+        userRepository.save(userEntity);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
     }
 
     @Override
     public User cancelMfa(Long id) {
+        UserEntity userEntity = getUserEntityById(id);
+        userEntity.setMfa(false);
+        userEntity.setQrCodeImageUri(StringUtils.EMPTY);
+        userEntity.setQrCodeSecret(StringUtils.EMPTY);
+        userRepository.save(userEntity);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
 
+    }
+
+    private UserEntity getUserEntityById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ApiException("User not found"));
     }
 
     private UserEntity getUserEntityByEmail(String email) {
