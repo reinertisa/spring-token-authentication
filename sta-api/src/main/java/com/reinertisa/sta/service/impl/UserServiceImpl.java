@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.reinertisa.sta.utils.UserUtils.*;
+import static com.reinertisa.sta.validation.UserValidation.verifyAccountStatus;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -162,6 +163,21 @@ public class UserServiceImpl implements UserService {
             confirmationRepository.save(confirmationEntity);
             publisher.publishEvent(new UserEvent(user, EventType.RESET_PASSWORD, Map.of("key", confirmationEntity.getKey())));
         }
+    }
+
+    @Override
+    public User verifyPasswordKey(String key) {
+        ConfirmationEntity confirmationEntity = getUserConfirmation(key);
+        if (confirmationEntity == null) {
+            throw new ApiException("Unable to find token");
+        }
+        UserEntity userEntity = getUserEntityByEmail(confirmationEntity.getUserEntity().getEmail());
+        if (userEntity == null) {
+            throw new ApiException("Incorrect token");
+        }
+        verifyAccountStatus(userEntity);
+        confirmationRepository.delete(confirmationEntity);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
     }
 
     private boolean verifyCode(String qrCode, String qrCodeSecret) {

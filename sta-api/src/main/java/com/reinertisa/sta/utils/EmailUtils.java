@@ -12,7 +12,7 @@ public class EmailUtils {
     }
 
     private static String getResetPasswordUrl(String host, String key) {
-        return host + "/verify/password?key=" + key;
+        return host + "/user/verify/password?key=" + key;
     }
 
     private static String getVerificationUrl(String host, String key) {

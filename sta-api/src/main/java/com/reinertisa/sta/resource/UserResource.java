@@ -73,6 +73,12 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "We sent you an email to reset your password.", OK));
     }
 
+    @GetMapping("/verify/password")
+    public ResponseEntity<Response> verifyPassword(@RequestParam("key") String key, HttpServletRequest request) {
+        User user = userService.verifyPasswordKey(key);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "Enter new password", OK));
+    }
+
     private URI getUri() {
         return URI.create("");
     }
