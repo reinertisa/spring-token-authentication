@@ -53,6 +53,14 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "Profile retrieved.", OK));
     }
 
+    @PatchMapping("update")
+    public ResponseEntity<Response> update(@AuthenticationPrincipal User userPrincipal,
+                                           @RequestBody UserRequest userRequest, HttpServletRequest request) {
+        User user = userService.updateUser(userPrincipal.getUserId(), userRequest.getFirstName(),
+                userRequest.getLastName(), userRequest.getEmail(), userRequest.getPhone(), userRequest.getBio());
+        return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "User updated successfully", OK));
+    }
+
     @PatchMapping("/mfa/setup")
     public ResponseEntity<Response> setupMfa(@AuthenticationPrincipal User userPrincipal, HttpServletRequest request) {
         User user = userService.setUpMfa(userPrincipal.getId());

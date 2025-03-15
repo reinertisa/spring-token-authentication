@@ -192,6 +192,18 @@ public class UserServiceImpl implements UserService {
         credentialRepository.save(credentials);
     }
 
+    @Override
+    public User updateUser(String userId, String firstName, String lastName, String email, String phone, String bio) {
+        UserEntity userEntity = getUserEntityByUserId(userId);
+        userEntity.setFirstName(firstName);
+        userEntity.setLastName(lastName);
+        userEntity.setEmail(email);
+        userEntity.setPhone(phone);
+        userEntity.setBio(bio);
+        userRepository.save(userEntity);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
     private boolean verifyCode(String qrCode, String qrCodeSecret) {
         TimeProvider timeProvider = new SystemTimeProvider();
         CodeGenerator codeGenerator = new DefaultCodeGenerator();
