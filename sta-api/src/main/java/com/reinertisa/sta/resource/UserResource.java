@@ -2,10 +2,7 @@ package com.reinertisa.sta.resource;
 
 import com.reinertisa.sta.domain.Response;
 import com.reinertisa.sta.dto.User;
-import com.reinertisa.sta.dtorequest.EmailRequest;
-import com.reinertisa.sta.dtorequest.QrCodeRequest;
-import com.reinertisa.sta.dtorequest.ResetPasswordRequest;
-import com.reinertisa.sta.dtorequest.UserRequest;
+import com.reinertisa.sta.dtorequest.*;
 import com.reinertisa.sta.enumaration.TokenType;
 import com.reinertisa.sta.service.JwtService;
 import com.reinertisa.sta.service.UserService;
@@ -53,12 +50,19 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "Profile retrieved.", OK));
     }
 
-    @PatchMapping("update")
+    @PatchMapping("/update")
     public ResponseEntity<Response> update(@AuthenticationPrincipal User userPrincipal,
                                            @RequestBody UserRequest userRequest, HttpServletRequest request) {
         User user = userService.updateUser(userPrincipal.getUserId(), userRequest.getFirstName(),
                 userRequest.getLastName(), userRequest.getEmail(), userRequest.getPhone(), userRequest.getBio());
         return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "User updated successfully", OK));
+    }
+
+    @PatchMapping("/updaterole")
+    public ResponseEntity<Response> updateRole(@AuthenticationPrincipal User userPrincipal,
+                                               @RequestBody RoleRequest roleRequest, HttpServletRequest request) {
+        userService.updateRole(userPrincipal.getUserId(), roleRequest.getRole());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Role updated successfully", OK));
     }
 
     @PatchMapping("/mfa/setup")
