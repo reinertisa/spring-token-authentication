@@ -67,7 +67,7 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "QR code verified.", OK));
     }
 
-    // Reset password when not logged in
+    // START - Reset password when not logged in
     @PostMapping("/resetpassword")
     public ResponseEntity<Response> resetPassword(@RequestBody @Valid EmailRequest emailRequest, HttpServletRequest request) {
         userService.resetPassword(emailRequest.getEmail());
@@ -85,6 +85,7 @@ public class UserResource {
         userService.updatePassword(resetPasswordRequest.getUserId(), resetPasswordRequest.getNewPassword(), resetPasswordRequest.getConfirmNewPassword());
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Password reset successfully", OK));
     }
+    // END - Reset password when not logged in
 
     private URI getUri() {
         return URI.create("");
