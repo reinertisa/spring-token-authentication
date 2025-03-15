@@ -181,8 +181,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updatePassword(String userId, String newPassword, String confirmNewPassword) {
-        return null;
+    public void updatePassword(String userId, String newPassword, String confirmNewPassword) {
+        if (!confirmNewPassword.equals(newPassword)) {
+            throw new ApiException("Passwords do not match. Please try again");
+        }
+
+        User user = getUserByUserId(userId);
+        CredentialEntity credentials = getUserCredentialById(user.getId());
+        credentials.setPassword(encoder.encode(newPassword));
+        credentialRepository.save(credentials);
     }
 
     private boolean verifyCode(String qrCode, String qrCodeSecret) {
