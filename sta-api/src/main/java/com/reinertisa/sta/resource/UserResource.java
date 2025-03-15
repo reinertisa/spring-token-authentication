@@ -65,6 +65,30 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Role updated successfully", OK));
     }
 
+    @PatchMapping("/toggleaccountexpired")
+    public ResponseEntity<Response> toggleAccountExpired(@AuthenticationPrincipal User user, HttpServletRequest request) {
+        userService.toggleAccountExpired(user.getUserId());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully.", OK));
+    }
+
+    @PatchMapping("/toggleaccountlocked")
+    public ResponseEntity<Response> toggleAccountLocked(@AuthenticationPrincipal User user, HttpServletRequest request) {
+        userService.toggleAccountLocked(user.getUserId());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully.", OK));
+    }
+
+    @PatchMapping("/toggleaccountenabled")
+    public ResponseEntity<Response> toggleAccountEnabled(@AuthenticationPrincipal User user, HttpServletRequest request) {
+        userService.toggleAccountEnabled(user.getUserId());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully.", OK));
+    }
+
+    @PatchMapping("/togglecredentialsexpired")
+    public ResponseEntity<Response> toggleCredentialsExpired(@AuthenticationPrincipal User user, HttpServletRequest request) {
+        userService.toggleCredentialsExpired(user.getUserId());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully.", OK));
+    }
+
     @PatchMapping("/mfa/setup")
     public ResponseEntity<Response> setupMfa(@AuthenticationPrincipal User userPrincipal, HttpServletRequest request) {
         User user = userService.setUpMfa(userPrincipal.getId());
