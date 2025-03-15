@@ -4,6 +4,7 @@ import com.reinertisa.sta.domain.Response;
 import com.reinertisa.sta.dto.User;
 import com.reinertisa.sta.dtorequest.EmailRequest;
 import com.reinertisa.sta.dtorequest.QrCodeRequest;
+import com.reinertisa.sta.dtorequest.ResetPasswordRequest;
 import com.reinertisa.sta.dtorequest.UserRequest;
 import com.reinertisa.sta.enumaration.TokenType;
 import com.reinertisa.sta.service.JwtService;
@@ -77,6 +78,12 @@ public class UserResource {
     public ResponseEntity<Response> verifyPassword(@RequestParam("key") String key, HttpServletRequest request) {
         User user = userService.verifyPasswordKey(key);
         return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "Enter new password", OK));
+    }
+
+    @PostMapping("/resetpassword/reset")
+    public ResponseEntity<Response> doResetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest, HttpServletRequest request) {
+        User user = userService.updatePassword(resetPasswordRequest.getUserId(), resetPasswordRequest.getNewPassword(), resetPasswordRequest.getConfirmNewPassword());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Password reset successfully", OK));
     }
 
     private URI getUri() {
