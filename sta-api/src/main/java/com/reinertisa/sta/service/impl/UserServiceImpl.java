@@ -27,7 +27,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,6 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+import static com.reinertisa.sta.constant.Constants.PHOTO_DIRECTORY;
 import static com.reinertisa.sta.utils.UserUtils.*;
 import static com.reinertisa.sta.validation.UserValidation.verifyAccountStatus;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -284,7 +284,7 @@ public class UserServiceImpl implements UserService {
     private final BiFunction<String, MultipartFile, String> photoFunction = (id, file) -> {
         String fileName = id + ".png";
         try {
-            Path fileStorageLocation = Paths.get(System.getProperty("user.home") + "/Downloads/uploads").toAbsolutePath().normalize();
+            Path fileStorageLocation = Paths.get(PHOTO_DIRECTORY).toAbsolutePath().normalize();
             if (!Files.exists(fileStorageLocation)) {
                 Files.createDirectories(fileStorageLocation);
             }
