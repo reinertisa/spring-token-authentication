@@ -109,7 +109,16 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "QR code verified.", OK));
     }
 
-    // START - Reset password when user is not logged in
+    // START - Reset password when user is logged in
+    @PatchMapping("/updatepassword")
+    public ResponseEntity<Response> updatePassword(@AuthenticationPrincipal User user, @RequestBody UpdatePasswordRequest passwordRequest, HttpServletRequest request) {
+        userService.updatePassword(user.getUserId(), passwordRequest.getPassword(), passwordRequest.getNewPassword(), passwordRequest.getConfirmNewPassword());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Password updated successfully.", OK));
+    }
+
+    // END - Reset password when user is logged in
+
+    // START - Reset password when user is NOT logged in
     @PostMapping("/resetpassword")
     public ResponseEntity<Response> resetPassword(@RequestBody @Valid EmailRequest emailRequest, HttpServletRequest request) {
         userService.resetPassword(emailRequest.getEmail());
@@ -127,7 +136,7 @@ public class UserResource {
         userService.updatePassword(resetPasswordRequest.getUserId(), resetPasswordRequest.getNewPassword(), resetPasswordRequest.getConfirmNewPassword());
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Password reset successfully", OK));
     }
-    // END - Reset password when user is not logged in
+    // END - Reset password when user is NOT logged in
 
     private URI getUri() {
         return URI.create("");

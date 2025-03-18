@@ -194,6 +194,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updatePassword(String userId, String currentPassword, String newPassword, String confirmNewPassword) {
+        if (!confirmNewPassword.equals(newPassword)) {
+            throw new ApiException("Passwords do not match. Please try again");
+        }
+
+        UserEntity user = getUserEntityByUserId(userId);
+        verifyAccountStatus(user);
+        CredentialEntity credentials = getUserCredentialById(user.getId());
+        if (!encoder.matches(currentPassword, credentials.getPassword())) {
+            throw new ApiException("Existing password is incorrect. Please try again.");
+        }
+        credentials.setPassword(encoder.encode(newPassword));
+        credentialRepository.save(credentials);
+    }
+
+    @Override
     public User updateUser(String userId, String firstName, String lastName, String email, String phone, String bio) {
         UserEntity userEntity = getUserEntityByUserId(userId);
         userEntity.setFirstName(firstName);

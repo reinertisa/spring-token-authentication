@@ -4,6 +4,7 @@ import com.reinertisa.sta.dto.User;
 import com.reinertisa.sta.entity.CredentialEntity;
 import com.reinertisa.sta.entity.RoleEntity;
 import com.reinertisa.sta.enumaration.LoginType;
+import jakarta.validation.constraints.NotEmpty;
 
 public interface UserService {
     void createUser(String firstName, String lastName, String email, String password);
@@ -19,10 +20,12 @@ public interface UserService {
     void resetPassword(String email);
     User verifyPasswordKey(String key);
     void updatePassword(String userId, String newPassword, String confirmNewPassword);
+    void updatePassword(String userId, String currentPassword, String newPassword, String confirmNewPassword);
     User updateUser(String userId, String firstName, String lastName, String email, String phone, String bio);
     void updateRole(String userId, String role);
     void toggleAccountExpired(String userId);
     void toggleAccountLocked(String userId);
     void toggleAccountEnabled(String userId);
     void toggleCredentialsExpired(String userId);
+
 }
