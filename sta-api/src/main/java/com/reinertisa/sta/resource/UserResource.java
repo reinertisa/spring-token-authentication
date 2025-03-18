@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.util.Map;
@@ -137,6 +138,12 @@ public class UserResource {
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Password reset successfully", OK));
     }
     // END - Reset password when user is NOT logged in
+
+    @PatchMapping("/photo")
+    public ResponseEntity<Response> uploadPhoto(@AuthenticationPrincipal User user, @RequestParam("file")MultipartFile file, HttpServletRequest request) {
+        String imageUrl = userService.uploadPhoto(user.getUserId(), file);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("imageUrl", imageUrl), "Photo update successfully.", OK));
+    }
 
     private URI getUri() {
         return URI.create("");

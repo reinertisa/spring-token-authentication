@@ -27,17 +27,24 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
-import static com.reinertisa.sta.constant.Constants.NINETY_DAYS;
 import static com.reinertisa.sta.utils.UserUtils.*;
 import static com.reinertisa.sta.validation.UserValidation.verifyAccountStatus;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -264,6 +271,32 @@ public class UserServiceImpl implements UserService {
 //        }
         userRepository.save(userEntity);
     }
+
+    @Override
+    public String uploadPhoto(String userId, MultipartFile file) {
+        UserEntity user = getUserEntityByUserId(userId);
+        String photoUrl = photoFunction.apply(userId, file);
+        user.setImageUrl(photoUrl + "?timestamp=" + System.currentTimeMillis());
+        userRepository.save(user);
+        return photoUrl;
+    }
+
+    private final BiFunction<String, MultipartFile, String> photoFunction = (id, file) -> {
+        String fileName = id + ".png";
+        try {
+            Path fileStorageLocation = Paths.get(System.getProperty("user.home") + "/Downloads/uploads").toAbsolutePath().normalize();
+            if (!Files.exists(fileStorageLocation)) {
+                Files.createDirectories(fileStorageLocation);
+            }
+            Files.copy(file.getInputStream(), fileStorageLocation.resolve(fileName), REPLACE_EXISTING);
+            return ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/user/image/" + fileName)
+                    .toUriString();
+        } catch (Exception ex) {
+            throw new ApiException("Unable to save image");
+        }
+    };
 
     private boolean verifyCode(String qrCode, String qrCodeSecret) {
         TimeProvider timeProvider = new SystemTimeProvider();
