@@ -72,7 +72,7 @@ public class DocumentResource {
                                                    HttpServletRequest request) {
         IDocument updateDocument = documentService.updateDocument(
                 document.getDocumentId(), document.getName(), document.getDescription());
-        return ResponseEntity.ok().body(getResponse(request, Map.of("document", document),
+        return ResponseEntity.ok().body(getResponse(request, Map.of("document", updateDocument),
                 "Document updated.", HttpStatus.OK));
     }
 }
