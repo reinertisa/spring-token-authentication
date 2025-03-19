@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import static com.reinertisa.sta.constant.Constants.PHOTO_DIRECTORY;
+import static com.reinertisa.sta.constant.Constants.FILE_STORAGE;
 import static com.reinertisa.sta.utils.UserUtils.*;
 import static com.reinertisa.sta.validation.UserValidation.verifyAccountStatus;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -284,7 +284,7 @@ public class UserServiceImpl implements UserService {
     private final BiFunction<String, MultipartFile, String> photoFunction = (id, file) -> {
         String fileName = id + ".png";
         try {
-            Path fileStorageLocation = Paths.get(PHOTO_DIRECTORY).toAbsolutePath().normalize();
+            Path fileStorageLocation = Paths.get(FILE_STORAGE).toAbsolutePath().normalize();
             if (!Files.exists(fileStorageLocation)) {
                 Files.createDirectories(fileStorageLocation);
             }
