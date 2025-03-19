@@ -77,9 +77,9 @@ CREATE TABLE IF NOT EXISTS documents (
     updated_by BIGINT NOT NULL,
     created_at TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uq_documents_document_id UNIQUE (document_id)
+    CONSTRAINT uq_documents_document_id UNIQUE (document_id),
     CONSTRAINT fk_documents_created_by FOREIGN KEY (created_by) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
-    CONSTRAINT fk_documents_updated_by FOREIGN KEY (created_by) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_documents_updated_by FOREIGN KEY (created_by) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS roles
