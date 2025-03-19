@@ -8,14 +8,19 @@ import com.reinertisa.sta.dtorequest.UpdateDocRequest;
 import com.reinertisa.sta.service.DocumentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -74,5 +79,17 @@ public class DocumentResource {
                 document.getDocumentId(), document.getName(), document.getDescription());
         return ResponseEntity.ok().body(getResponse(request, Map.of("document", updateDocument),
                 "Document updated.", HttpStatus.OK));
+    }
+
+    @GetMapping("/download/{documentName}")
+    public ResponseEntity<Resource> downloadDocument(@AuthenticationPrincipal User user,
+                                                     @PathVariable("documentName") String documentName,
+                                                     HttpServletRequest request) throws IOException {
+        Resource resource = documentService.getResource(documentName);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("File-Name", documentName);
+        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;File-Name=%s", resource.getFilename()));
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(Files.probeContentType(resource.getFile().toPath())))
+                .headers(httpHeaders).body(resource);
     }
 }

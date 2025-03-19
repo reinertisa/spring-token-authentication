@@ -12,6 +12,7 @@ import com.reinertisa.sta.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -117,6 +118,14 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Resource getResource(String documentName) {
-        return null;
+        try {
+            Path filePath = Paths.get(FILE_STORAGE).toAbsolutePath().normalize().resolve(documentName);
+            if (!Files.exists(filePath)) {
+                throw new ApiException("Document not found");
+            }
+            return new UrlResource(filePath.toUri());
+        } catch (Exception ex) {
+            throw new ApiException("Unable to update document");
+        }
     }
 }
