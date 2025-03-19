@@ -4,6 +4,7 @@ import com.reinertisa.sta.domain.Response;
 import com.reinertisa.sta.dto.Document;
 import com.reinertisa.sta.dto.User;
 import com.reinertisa.sta.dto.api.IDocument;
+import com.reinertisa.sta.dtorequest.UpdateDocRequest;
 import com.reinertisa.sta.service.DocumentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -63,5 +64,15 @@ public class DocumentResource {
         IDocument document = documentService.getDocumentByDocumentId(documentId);
         return ResponseEntity.ok().body(getResponse(request, Map.of("document", document),
                 "Document retrieved.", HttpStatus.OK));
+    }
+
+    @PatchMapping
+    public ResponseEntity<Response> updateDocument(@AuthenticationPrincipal User user,
+                                                   @RequestBody UpdateDocRequest document,
+                                                   HttpServletRequest request) {
+        IDocument updateDocument = documentService.updateDocument(
+                document.getDocumentId(), document.getName(), document.getDescription());
+        return ResponseEntity.ok().body(getResponse(request, Map.of("document", document),
+                "Document updated.", HttpStatus.OK));
     }
 }
