@@ -2,6 +2,10 @@ import {IResponse} from "../models/Response.ts";
 
 export const baseUrl = 'http://localhost:8085/user';
 
+export const isJsonContentType = (headers: Headers) =>
+    ['application/vnd.api+json', 'application/json', 'application/vnd.hal+json', 'application/pdf', 'multipart/form-data']
+    .includes(headers.get('content-type')?.trimEnd()!)
+
 export const processResponse = <T>(response: IResponse<T>, meta: any, arg: unknown): IResponse<T> => {
     const {request} = meta;
 
