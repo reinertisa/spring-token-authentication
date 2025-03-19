@@ -1,5 +1,6 @@
 package com.reinertisa.sta.repository;
 
+import com.reinertisa.sta.dto.api.IDocument;
 import com.reinertisa.sta.entity.DocumentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,5 +14,5 @@ import static com.reinertisa.sta.constant.Constants.SELECT_DOCUMENTS_QUERY;
 @Repository
 public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> {
     @Query(countQuery = SELECT_COUNT_DOCUMENTS_QUERY, value = SELECT_DOCUMENTS_QUERY, nativeQuery = true)
-    Page<DocumentEntity> findDocuments(Pageable pageable);
+    Page<IDocument> findDocuments(Pageable pageable);
 }
