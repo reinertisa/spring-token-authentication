@@ -43,8 +43,8 @@ public interface IDocument {
     String getOwner_Phone();
     void setOwner_Phone(String ownerPhone);
     @JsonProperty("ownerLastLogin")
-    String getOwner_Last_Login();
-    void setOwner_Last_Login(String ownerLastLogin);
+    LocalDateTime getOwner_Last_Login();
+    void setOwner_Last_Login(LocalDateTime ownerLastLogin);
     @JsonProperty("updaterName")
     String getUpdater_Name();
 }
