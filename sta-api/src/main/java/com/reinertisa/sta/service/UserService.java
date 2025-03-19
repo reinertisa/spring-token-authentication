@@ -7,6 +7,8 @@ import com.reinertisa.sta.enumaration.LoginType;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface UserService {
     void createUser(String firstName, String lastName, String email, String password);
     RoleEntity getRoleName(String name);
@@ -30,4 +32,5 @@ public interface UserService {
     void toggleCredentialsExpired(String userId);
     String uploadPhoto(String userId, MultipartFile file);
     User getUserById(Long id);
+    List<User> getUsers();
 }
