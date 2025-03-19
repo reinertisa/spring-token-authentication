@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import static com.reinertisa.sta.constant.Constants.*;
 
 @Repository
@@ -18,4 +20,7 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
 
     @Query(countQuery = SELECT_COUNT_DOCUMENTS_BY_NAME_QUERY, value = SELECT_DOCUMENTS_BY_NAME_QUERY, nativeQuery = true)
     Page<IDocument> findDocumentsByName(@Param("documentName") String name, Pageable pageable);
+
+    @Query(value = SELECT_DOCUMENT_QUERY, nativeQuery = true)
+    Optional<IDocument> findDocumentByDocumentId(String documentId);
 }

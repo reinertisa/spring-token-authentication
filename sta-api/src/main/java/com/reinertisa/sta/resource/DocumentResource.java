@@ -52,7 +52,16 @@ public class DocumentResource {
                                                     @RequestParam(value = "size", defaultValue = "5") int size,
                                                     @RequestParam(value = "name", defaultValue = "") String name) {
         Page<IDocument> documents = documentService.getDocuments(page, size, name);
-        return ResponseEntity.ok().body(getResponse(request, Map.of("documents", documents), "Document(s) retrieved", HttpStatus.OK));
+        return ResponseEntity.ok().body(getResponse(request, Map.of("documents", documents),
+                "Document(s) retrieved", HttpStatus.OK));
     }
 
+    @GetMapping("/{documentId}")
+    public ResponseEntity<Response> getDocument(@AuthenticationPrincipal User user,
+                                                @PathVariable("documentId") String documentId,
+                                                HttpServletRequest request) {
+        IDocument document = documentService.getDocumentByDocumentId(documentId);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("document", document),
+                "Document retrieved.", HttpStatus.OK));
+    }
 }
