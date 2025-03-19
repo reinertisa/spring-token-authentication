@@ -29,7 +29,7 @@ public class DocumentResource {
 
     @PostMapping("/upload")
     public ResponseEntity<Response> saveDocuments(@AuthenticationPrincipal User user,
-                                                  @RequestParam("files")List<MultipartFile> documents,
+                                                  @RequestParam("files") List<MultipartFile> documents,
                                                   HttpServletRequest request) {
         Collection<Document> newDocuments = documentService.saveDocuments(user.getUserId(), documents);
         return ResponseEntity.created(URI.create(""))
