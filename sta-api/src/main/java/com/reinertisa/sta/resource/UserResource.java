@@ -63,7 +63,7 @@ public class UserResource {
     }
 
     @PatchMapping("/update")
-    @PreAuthorize("hasAnyAuthority('user:update') or hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('user:update') or hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Response> update(@AuthenticationPrincipal User userPrincipal,
                                            @RequestBody UserRequest userRequest, HttpServletRequest request) {
         User user = userService.updateUser(userPrincipal.getUserId(), userRequest.getFirstName(),
