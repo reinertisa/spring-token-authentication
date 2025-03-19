@@ -43,7 +43,7 @@ public class UserResource {
     @PostMapping("/register")
     public ResponseEntity<Response> saveUser(@RequestBody @Valid UserRequest user, HttpServletRequest request) {
         userService.createUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-        return ResponseEntity.created(getUri())
+        return ResponseEntity.created(URI.create(""))
                 .body(getResponse(request, emptyMap(),
                         "Account created. Check your email to enable your account.", CREATED));
     }
@@ -163,9 +163,5 @@ public class UserResource {
     public ResponseEntity<Response> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         logoutHandler.logout(request, response, authentication);
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "You've logged out successfully.", OK));
-    }
-
-    private URI getUri() {
-        return URI.create("");
     }
 }
