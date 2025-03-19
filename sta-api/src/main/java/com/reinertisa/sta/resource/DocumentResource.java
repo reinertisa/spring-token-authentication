@@ -43,7 +43,7 @@ public class DocumentResource {
                                                  @RequestParam(value = "size", defaultValue = "5") int size) {
         Page<IDocument> documents = documentService.getDocuments(page, size);
         return ResponseEntity.ok().body(getResponse(request, Map.of("documents", documents),
-                "Document(s) uploaded.", HttpStatus.OK));
+                "Document(s) retrieved.", HttpStatus.OK));
     }
 
 }
