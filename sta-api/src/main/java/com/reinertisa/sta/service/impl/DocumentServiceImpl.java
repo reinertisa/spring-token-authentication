@@ -1,5 +1,6 @@
 package com.reinertisa.sta.service.impl;
 
+import com.reinertisa.sta.dto.Document;
 import com.reinertisa.sta.dto.api.IDocument;
 import com.reinertisa.sta.repository.DocumentRepository;
 import com.reinertisa.sta.service.DocumentService;
@@ -33,7 +34,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Collection<IDocument> saveDocuments(String userId, List<MultipartFile> documents) {
+    public Collection<Document> saveDocuments(String userId, List<MultipartFile> documents) {
         return List.of();
     }
 
