@@ -46,4 +46,13 @@ public class DocumentResource {
                 "Document(s) retrieved.", HttpStatus.OK));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Response> searchDocuments(@AuthenticationPrincipal User user, HttpServletRequest request,
+                                                    @RequestParam(value = "base", defaultValue = "0") int page,
+                                                    @RequestParam(value = "size", defaultValue = "5") int size,
+                                                    @RequestParam(value = "name", defaultValue = "") String name) {
+        Page<IDocument> documents = documentService.getDocuments(page, size, name);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("documents", documents), "Document(s) retrieved", HttpStatus.OK));
+    }
+
 }
