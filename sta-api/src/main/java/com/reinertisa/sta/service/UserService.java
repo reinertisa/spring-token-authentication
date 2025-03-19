@@ -4,6 +4,7 @@ import com.reinertisa.sta.dto.User;
 import com.reinertisa.sta.entity.CredentialEntity;
 import com.reinertisa.sta.entity.RoleEntity;
 import com.reinertisa.sta.enumaration.LoginType;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
@@ -28,5 +29,5 @@ public interface UserService {
     void toggleAccountEnabled(String userId);
     void toggleCredentialsExpired(String userId);
     String uploadPhoto(String userId, MultipartFile file);
-
+    User getUserById(Long id);
 }

@@ -281,6 +281,14 @@ public class UserServiceImpl implements UserService {
         return photoUrl;
     }
 
+    @Override
+    public User getUserById(Long id) {
+        UserEntity userEntity = userRepository
+                .findById(id)
+                .orElseThrow(() -> new ApiException("User not found"));
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
     private final BiFunction<String, MultipartFile, String> photoFunction = (id, file) -> {
         String fileName = id + ".png";
         try {
