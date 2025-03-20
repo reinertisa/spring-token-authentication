@@ -33,7 +33,6 @@ import static com.reinertisa.sta.enumaration.TokenType.ACCESS;
 import static com.reinertisa.sta.enumaration.TokenType.REFRESH;
 import static io.jsonwebtoken.Header.JWT_TYPE;
 import static io.jsonwebtoken.Header.TYPE;
-import static java.util.Arrays.copyOf;
 import static java.util.Arrays.stream;
 import static java.util.Optional.empty;
 import static org.apache.tomcat.util.http.SameSiteCookies.NONE;
@@ -119,9 +118,7 @@ public class JwtServiceImpl extends JwtConfiguration implements JwtService {
 
     private <T> T getClaimsValue(String token, Function<Claims, T> claims) {
         return claimsFunction.andThen(claims).apply(token);
-
     }
-
 
     public Function<String, List<GrantedAuthority>> authorities = token ->
             commaSeparatedStringToAuthorityList(new StringJoiner(AUTHORITY_DELIMITER)

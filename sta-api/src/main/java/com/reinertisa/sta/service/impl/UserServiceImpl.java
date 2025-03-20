@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
         var userEntity = getUserEntityByEmail(email);
         RequestContext.setUserId(userEntity.getId());
         switch (loginType) {
-            case LoginType.LOGIN_ATTEMPT -> {
+            case LOGIN_ATTEMPT -> {
                 if (userCache.get(userEntity.getEmail()) == null) {
                     userEntity.setLoginAttempts(0);
                     userEntity.setAccountNonLocked(true);
@@ -150,7 +150,6 @@ public class UserServiceImpl implements UserService {
         userEntity.setQrCodeSecret(StringUtils.EMPTY);
         userRepository.save(userEntity);
         return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
-
     }
 
     @Override
@@ -350,6 +349,4 @@ public class UserServiceImpl implements UserService {
         RoleEntity role = getRoleName(Authority.USER.name());
         return createUserEntity(firstName, lastName, email, role);
     }
-
-
 }
