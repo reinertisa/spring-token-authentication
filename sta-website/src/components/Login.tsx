@@ -103,7 +103,7 @@ export default function Login() {
                             </div>
                             <hr />
                             <form className="needs-validation" noValidate>
-                                <div className="row g=3">
+                                <div className="row g-3">
                                     <div className="col-12">
                                         <label htmlFor="email" className="form-label">Email address</label>
                                         <div className="input-group has-validation">
