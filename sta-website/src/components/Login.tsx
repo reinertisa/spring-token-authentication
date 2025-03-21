@@ -1,11 +1,23 @@
 import {Link, Navigate, useLocation} from "react-router-dom";
 import {userAPI} from "../services/UserService.ts";
 import {IUserRequest} from "../models/ICredentials.ts";
+import {z} from 'zod';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from "@hookform/resolvers/zod";
+
+const schema = z.object({
+    email: z.string().min(3, 'Email is required').email('Invalid email address'),
+    password: z.string().min(5, 'Password is required')
+});
 
 export default function Login() {
     const location = useLocation();
     const isLoggedIn: boolean = JSON.parse(localStorage.getItem('')!) as boolean || false;
     const [loginUser, {data, error, isLoading, isSuccess}] = userAPI.useLoginUserMutation();
+    const {register, handleSubmit, formState: form, getFieldState} = useForm<IUserRequest>({
+        resolver: zodResolver(schema),
+        mode: 'onTouched'
+    });
 
     const handleLogin = (credentials: IUserRequest) => loginUser(credentials);
 
@@ -102,29 +114,45 @@ export default function Login() {
                                 An error occurred
                             </div>
                             <hr />
-                            <form className="needs-validation" noValidate>
+                            <form onSubmit={handleSubmit(handleLogin)} className="needs-validation" noValidate>
                                 <div className="row g-3">
                                     <div className="col-12">
                                         <label htmlFor="email" className="form-label">Email address</label>
                                         <div className="input-group has-validation">
                                             <span className="input-group-text"><i className="bi bi-envelope"></i></span>
-                                            <input type="text" name="email" autoComplete="on" className={`form-control`} id="email" placeholder="Email address" />
-                                            <div className="invalid-feedback">email error</div>
+                                            <input
+                                                type="text"
+                                                {...register('email')}
+                                                name="email"
+                                                autoComplete="on"
+                                                className={`form-control ' ${form.errors.email ? 'is-invalid' : ''} `}
+                                                id="email"
+                                                placeholder="Email address"
+                                            />
+                                            <div className="invalid-feedback">{form.errors.email?.message}</div>
                                         </div>
                                     </div>
                                     <div className="col-12">
                                         <label htmlFor="password" className="form-label">Password</label>
                                         <div className="input-group has-validation">
                                             <span className="input-group-text"><i className="bi bi-key"></i></span>
-                                            <input type="password" name="password" autoComplete="on" className={`form-control`} placeholder="Password" disabled={false} />
-                                            <div className="invalid-feedback">email error</div>
+                                            <input
+                                                type="password"
+                                                {...register('password')}
+                                                name="password"
+                                                autoComplete="on"
+                                                className={`form-control ' ${form.errors.password ? 'is-invalid' : ''} `}
+                                                placeholder="Password"
+                                                disabled={false}
+                                            />
+                                            <div className="invalid-feedback">{form.errors.password?.message}</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="col mt-3">
-                                    <button disabled={false} className="btn btn-primary btn-block" type="submit">
-                                        <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                                        <span role="status">Login</span>
+                                    <button disabled={form.isSubmitting || isLoading} className="btn btn-primary btn-block" type="submit">
+                                        {(form.isSubmitting || isLoading) && <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>}
+                                        <span role="status">{(form.isSubmitting || isLoading) ? 'Loading...' : 'Login'}</span>
                                     </button>
                                 </div>
                             </form>
