@@ -1,6 +1,7 @@
 import {Link, Navigate, useLocation} from "react-router-dom";
 import {userAPI} from "../services/UserService.ts";
 import {IUserRequest} from "../models/ICredentials.ts";
+import {IResponse} from "../models/IResponse.ts";
 import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -113,9 +114,7 @@ export default function Login() {
                     <div className="card">
                         <div className="card-body">
                             <h4 className="mb-3">Login</h4>
-                            <div className="alert alert-dismissible alert-danger">
-                                An error occurred
-                            </div>
+                            {error && <div className="alert alert-dismissible alert-danger">{'data' in error ? (error.data as IResponse<void>).message : 'An error occurred'}</div>}
                             <hr />
                             <form onSubmit={handleSubmit(handleLogin)} className="needs-validation" noValidate>
                                 <div className="row g-3">
