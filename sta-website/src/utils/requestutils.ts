@@ -1,4 +1,5 @@
 import {IResponse} from "../models/IResponse.ts";
+import {Key} from "../enum/cache.key.ts";
 
 export const baseUrl = 'http://localhost:8085/user';
 
@@ -10,7 +11,7 @@ export const processResponse = <T>(response: IResponse<T>, meta: any, arg: unkno
     const {request} = meta;
 
     if (request.url.includes('logout')) {
-        localStorage.removeItem("key");
+        localStorage.removeItem(Key.LOGGEDIN);
     }
     if (!request.url.includes('profile')) {
         // Show toast notification
@@ -21,7 +22,7 @@ export const processResponse = <T>(response: IResponse<T>, meta: any, arg: unkno
 
 export const processError = (error: {status: number; data: IResponse<void>}, meta: unknown, arg: unknown): {status: number; data: IResponse<void>} => {
     if (error.data.code === 401 && error.data.status === 'UNAUTHORIZED' && error.data.message === 'You are not logged in') {
-        localStorage.setItem("", "");
+        localStorage.setItem(Key.LOGGEDIN, "false");
     }
 
     // Show toast notification
