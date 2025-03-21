@@ -19,6 +19,9 @@ export default function Login() {
         mode: 'onTouched'
     });
 
+    const isFieldValid = (fieldName: keyof IUserRequest): boolean =>
+        getFieldState(fieldName, form).isTouched && !getFieldState(fieldName, form).invalid;
+
     const handleLogin = (credentials: IUserRequest) => loginUser(credentials);
 
     if (isLoggedIn) {
@@ -125,7 +128,7 @@ export default function Login() {
                                                 {...register('email')}
                                                 name="email"
                                                 autoComplete="on"
-                                                className={`form-control ' ${form.errors.email ? 'is-invalid' : ''} `}
+                                                className={`form-control ' ${form.errors.email ? 'is-invalid' : ''} ${isFieldValid('email') ? 'is-valid' : ''}`}
                                                 id="email"
                                                 placeholder="Email address"
                                             />
@@ -141,7 +144,7 @@ export default function Login() {
                                                 {...register('password')}
                                                 name="password"
                                                 autoComplete="on"
-                                                className={`form-control ' ${form.errors.password ? 'is-invalid' : ''} `}
+                                                className={`form-control ' ${form.errors.password ? 'is-invalid' : ''} ${isFieldValid('password') ? 'is-valid' : ''}`}
                                                 placeholder="Password"
                                                 disabled={false}
                                             />
