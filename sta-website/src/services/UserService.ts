@@ -2,7 +2,8 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {IResponse} from "../models/IResponse.ts";
 import {baseUrl, isJsonContentType, processError, processResponse} from "../utils/requestutils.ts";
 import {QrCodeRequest, User} from "../models/IUser.ts";
-import {IUserRequest} from "../models/ICredentials.ts";
+import {IRegisterRequest, IUserRequest} from "../models/ICredentials.ts";
+import {Http} from "../enum/http.method.ts";
 
 export const userAPI = createApi({
     reducerPath: 'userAPI',
@@ -12,7 +13,7 @@ export const userAPI = createApi({
         fetchUser: builder.query<IResponse<User>, void>({
             query: () => ({
                 url: '/profile',
-                method: 'GET'
+                method: Http.GET
             }),
             keepUnusedDataFor: 120,
             transformResponse: processResponse<User>,
@@ -22,16 +23,24 @@ export const userAPI = createApi({
         loginUser: builder.mutation<IResponse<User>, IUserRequest>({
             query: (credentials) => ({
                 url: '/login',
-                method: 'POST',
+                method: Http.POST,
                 body: credentials,
             }),
             transformResponse: processResponse<User>,
             transformErrorResponse: processError
         }),
+        registerUser: builder.mutation<IResponse<void>, IRegisterRequest>({
+            query: (registerRequest) => ({
+                url: '/register',
+                method: Http.POST,
+                body: registerRequest,
+            }),
+            transformErrorResponse: processError,
+        }),
         verifyQrCode: builder.mutation<IResponse<User>, QrCodeRequest>({
             query: (qrCodeRequest) => ({
                 url: '/verify/qrcode',
-                method: 'POST',
+                method: Http.POST,
                 body: qrCodeRequest,
             }),
             transformResponse: processResponse<User>,

@@ -3,9 +3,10 @@ import {IRegisterRequest} from "../models/ICredentials.ts";
 import {z} from 'zod';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod";
-import {QrCodeRequest} from "../models/IUser.ts";
 import {Key} from "../enum/cache.key.ts";
+import {userAPI} from "../services/UserService.ts";
 import {useEffect} from "react";
+
 
 const schema = z.object({
     firstName: z.string().min(1, 'First name is required'),
@@ -18,6 +19,7 @@ const schema = z.object({
 export default function Register() {
     const location = useLocation();
     const isLoggedIn: boolean = JSON.parse(localStorage.getItem(Key.LOGGEDIN)!) as boolean || false;
+    const [registerUser, {data, error, isLoading, isSuccess}] = userAPI.useRegisterUserMutation();
 
     const {register, handleSubmit, reset, formState, getFieldState} = useForm<IRegisterRequest>({
         resolver: zodResolver(schema),
@@ -27,11 +29,11 @@ export default function Register() {
     const isFieldValid = (fieldName: keyof IRegisterRequest): boolean =>
         getFieldState(fieldName, formState).isTouched && !getFieldState(fieldName, formState).invalid;
 
-    const handleRegister = (registerRequest: IRegisterRequest) => loginUser(registerRequest);
+    const handleRegister = async (registerRequest: IRegisterRequest) => await registerUser(registerRequest);
 
-    // useEffect(() => {
-    //     reset();
-    // }, [isSuccess])
+    useEffect(() => {
+        reset();
+    }, [isSuccess])
 
     return (
         <div>Register</div>
