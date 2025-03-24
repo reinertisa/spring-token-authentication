@@ -4,22 +4,42 @@ import {useEffect} from "react";
 import {IResponse} from "../models/IResponse.ts";
 import {UpdateNewPassword} from "../models/ICredentials.ts";
 import {z} from "zod";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
 
 
 const schema = z.object({
-    email: z.string().min(3, 'Email is required').email('Invalid email address'),
-    password: z.string().min(5, 'Password is required')
-});
+    newPassword: z.string().min(5, {message: 'New password required'}),
+    confirmNewPassword: z.string().min(5, {message: 'Confirm password is required'}),
+    userId: z.string().min(5, {message: 'User ID password is required'})
+}).superRefine(({newPassword, confirmNewPassword}, ctx) => {
+    if (newPassword !== confirmNewPassword) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['confirmNewPassword'],
+            message: 'New password and confirm password do not match'
+        })
+    }
+})
 
 export default function VerifyPassword() {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const key = searchParams.get('key');
     const [verifyPassword, {data, error, isLoading, isSuccess}] = userAPI.useVerifyPasswordMutation();
-    const [resetpassword, {}] = userAPI.useDoResetPasswordMutation();
+    const [resetpassword, {data: resetData, error: resetError, isLoading: resetLoading, isSuccess: resetSuccess}] = userAPI.useDoResetPasswordMutation();
+
+    const {register, handleSubmit, reset, formState, getFieldState} = useForm<UpdateNewPassword>({
+        resolver: zodResolver(schema),
+        mode: 'onTouched'
+    });
+
+    const isFieldValid = (fieldName: keyof UpdateNewPassword): boolean =>
+        getFieldState(fieldName, formState).isTouched && !getFieldState(fieldName, formState).invalid;
 
     const handleResetPassword = async (passwordrequest: UpdateNewPassword) => {
         await resetpassword(passwordrequest);
+        reset();
     }
 
     useEffect(() => {
@@ -101,7 +121,76 @@ export default function VerifyPassword() {
     if (isSuccess && location.pathname.includes('/verify/password')) {
         return (
             <div className="container">
-                test
+                <div className="row justify-content-center">
+                    <div className="col-lg-6 col-md-6 col-sm-12" style={{marginTop: '150px'}}>
+                        <div className="card">
+                            <div className="card-body">
+                                <h4 className="mb-3">Please enter new password</h4>
+                                {resetError && <div className="alert alert-dismissible alert-danger">
+                                    {'data' in resetError ? (resetError.data as IResponse<void>).message : 'An error occurred'}</div>}
+                                {resetSuccess && <div className="alert alert-dismissible alert-success">
+                                    {resetData.message || 'Password reset successfully'}</div>}
+                                <hr />
+                                <form onSubmit={handleSubmit(handleResetPassword)} className="needs-validation" noValidate>
+                                    <input type="hidden" {...register('userId')} defaultValue={data.data.user.userId} name="userId" id="userId" disabled={false} required />
+                                    <div className="row g-3">
+                                        <div className="col-12">
+                                            <label htmlFor="newPassword" className="form-label">New Password</label>
+                                            <div className="input-group has-validation">
+                                                <span className="input-group-text"><i className="bi bi-key"></i></span>
+                                                <input
+                                                    type="text"
+                                                    {...register('newPassword')}
+                                                    name="newPassword"
+                                                    autoComplete="on"
+                                                    className={`form-control ' ${formState.errors.newPassword ? 'is-invalid' : ''} ${isFieldValid('newPassword') ? 'is-valid' : ''}`}
+                                                    id="newPassword"
+                                                    placeholder="New Password"
+                                                />
+                                                <div className="invalid-feedback">{formState.errors.newPassword?.message}</div>
+                                            </div>
+                                        </div>
+                                        <div className="col-12">
+                                            <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label>
+                                            <div className="input-group has-validation">
+                                                <span className="input-group-text"><i className="bi bi-key"></i></span>
+                                                <input
+                                                    type="text"
+                                                    {...register('confirmNewPassword')}
+                                                    name="confirmNewPassword"
+                                                    autoComplete="on"
+                                                    className={`form-control ' ${formState.errors.confirmNewPassword ? 'is-invalid' : ''} ${isFieldValid('confirmNewPassword') ? 'is-valid' : ''}`}
+                                                    id="confirmNewPassword"
+                                                    placeholder="Confirm New Password"
+                                                />
+                                                <div className="invalid-feedback">{formState.errors.confirmNewPassword?.message}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col mt-3">
+                                        <button disabled={formState.isSubmitting || isLoading} className="btn btn-primary btn-block" type="submit">
+                                            {(formState.isSubmitting || isLoading) && <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>}
+                                            <span role="status">{(formState.isSubmitting || isLoading) ? 'Loading...' : 'Login'}</span>
+                                        </button>
+                                    </div>
+                                </form>
+                                <hr className="my-3" />
+                                <div className="row mb-3">
+                                    <div className="col d-flex justify-content-start">
+                                        <div className="btn btn-outline-light">
+                                            <Link to="/register" style={{textDecoration: 'none'}}>Create an Account</Link>
+                                        </div>
+                                    </div>
+                                    <div className="col d-flex justify-content-end">
+                                        <div className="link-dark">
+                                            <Link to="/resetpassword">Forgot password?</Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
