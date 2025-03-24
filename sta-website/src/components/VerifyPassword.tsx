@@ -2,13 +2,25 @@ import {Link, useLocation} from "react-router-dom";
 import {userAPI} from "../services/UserService.ts";
 import {useEffect} from "react";
 import {IResponse} from "../models/IResponse.ts";
+import {UpdateNewPassword} from "../models/ICredentials.ts";
+import {z} from "zod";
+
+
+const schema = z.object({
+    email: z.string().min(3, 'Email is required').email('Invalid email address'),
+    password: z.string().min(5, 'Password is required')
+});
 
 export default function VerifyPassword() {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const key = searchParams.get('key');
+    const [verifyPassword, {data, error, isLoading, isSuccess}] = userAPI.useVerifyPasswordMutation();
+    const [resetpassword, {}] = userAPI.useDoResetPasswordMutation();
 
-    const [verifyPassword, {data, error, isLoading, isSuccess}] = userAPI.useVerifyPasswordMutation()
+    const handleResetPassword = async (passwordrequest: UpdateNewPassword) => {
+        await resetpassword(passwordrequest);
+    }
 
     useEffect(() => {
         if (key && location.pathname.includes('/verify/password')) {
