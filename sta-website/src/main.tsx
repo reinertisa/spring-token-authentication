@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar.tsx";
 import Documents from "./components/document/Documents.tsx";
 import Register from "./components/Register.tsx";
 import VerifyAccount from "./components/VerifyAccount.tsx";
+import ResetPassword from "./components/ResetPassword.tsx";
 
 const store = setupStore();
 const router = createBrowserRouter(createRoutesFromElements(
@@ -16,6 +17,7 @@ const router = createBrowserRouter(createRoutesFromElements(
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="user/verify/account" element={<VerifyAccount />} />
+        <Route path="resetpassword" element={<ResetPassword />} />
         <Route element={<NavBar />}>
             <Route index path="/documents" element={<Documents />} />
             <Route path="/" element={<Navigate to={'/documents'} />} />
