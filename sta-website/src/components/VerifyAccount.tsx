@@ -3,7 +3,7 @@ import {userAPI} from "../services/UserService.ts";
 import {useEffect} from "react";
 import {IResponse} from "../models/IResponse.ts";
 
-export default function Verify() {
+export default function VerifyAccount() {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const key = searchParams.get('key');
@@ -58,8 +58,10 @@ export default function Verify() {
                                     {'data' in accountError ? (accountError.data as IResponse<void>).message! : 'An error occurred'}
                                 </div>}
                                 <div className="d-flex align-items-center">
-                                    {!accountError && <><strong role="status">Please wait. Verifying...</strong>}
-                                    <div className="spinner-border ms-auto" aria-hidden="true"></div></>}
+                                    {!accountError && <>
+                                        <strong role="status">Please wait. Verifying...</strong>
+                                        <div className="spinner-border ms-auto" aria-hidden="true"></div>
+                                    </>}
                                 </div>
                                 {accountError && <>
                                     <hr className="my-3" />
