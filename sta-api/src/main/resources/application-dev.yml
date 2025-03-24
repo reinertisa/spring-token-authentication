@@ -12,8 +12,8 @@ ACTIVE_PROFILE: dev
 #Email Config
 EMAIL_HOST: smtp.gmail.com
 EMAIL_PORT: 587
-EMAIL_ID: reinert.isa@gmail.com
-EMAIL_PASSWORD: ejdtffiqchtehjrf
+EMAIL_ID:
+EMAIL_PASSWORD:
 VERIFY_EMAIL_HOST: http://localhost:8085
 
 JWT_EXPIRATION: 432_000_000 #5 days
