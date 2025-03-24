@@ -46,6 +46,15 @@ export const userAPI = createApi({
             transformResponse: processResponse<void>,
             transformErrorResponse: processError,
         }),
+        verifyPassword: builder.mutation<IResponse<User>, string>({
+            query: (key) => ({
+                url: `/verify/password?key=${key}`,
+                method: Http.GET,
+            }),
+            transformResponse: processResponse<User>,
+            transformErrorResponse: processError,
+            invalidatesTags: (result, error) => error ? [] : ['User']
+        }),
         verifyQrCode: builder.mutation<IResponse<User>, QrCodeRequest>({
             query: (qrCodeRequest) => ({
                 url: '/verify/qrcode',
