@@ -176,7 +176,7 @@ export default function Login() {
                                         </button>
                                     </div>
                                 </form>
-                                <hr className="my=3" />
+                                <hr className="my-3" />
                                 <div className="row mb-3">
                                     <div className="col d-flex justify-content-start">
                                         <div className="btn btn-outline-light">
