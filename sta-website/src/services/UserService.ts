@@ -95,6 +95,16 @@ export const userAPI = createApi({
             transformErrorResponse: processError,
             invalidatesTags: (result, error) => error ? [] : ['User']
         }),
+        updateUser: builder.mutation<IResponse<User>, IUserRequest>({
+            query: (user) => ({
+                url: `/update`,
+                method: Http.PATCH,
+                body: user,
+            }),
+            transformResponse: processResponse<User>,
+            transformErrorResponse: processError,
+            invalidatesTags: (result, error) => error ? [] : ['User']
+        }),
     })
 });
 
