@@ -17,7 +17,7 @@ export default function Restricted() {
         );
     }
 
-    if (userData.data.user.role !== 'USER') {
+    if (userData.data.user.role === 'ADMIN' || userData.data.user.role === 'SUPER_ADMIN') {
         return <Outlet />
     } else {
         return (
