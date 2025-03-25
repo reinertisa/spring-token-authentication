@@ -168,7 +168,7 @@ public class UserResource {
     }
 
     @PatchMapping("/photo")
-    public ResponseEntity<Response> uploadPhoto(@AuthenticationPrincipal User user, @RequestParam("file")MultipartFile file, HttpServletRequest request) {
+    public ResponseEntity<Response> uploadPhoto(@AuthenticationPrincipal User user, @RequestParam("file") MultipartFile file, HttpServletRequest request) {
         String imageUrl = userService.uploadPhoto(user.getUserId(), file);
         return ResponseEntity.ok().body(getResponse(request, Map.of("imageUrl", imageUrl), "Photo update successfully.", OK));
     }
