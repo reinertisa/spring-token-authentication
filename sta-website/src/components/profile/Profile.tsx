@@ -10,8 +10,8 @@ const schema = z.object({
     firstName: z.string().min(1, 'First name is required'),
     lastName: z.string().min(1, 'Last name is required'),
     email: z.string().min(3, 'Email is required').email('Invalid email address'),
-    password: z.string().min(5, 'Password is required'),
-    bio: z.string().min(5, 'Bio is required')
+    bio: z.string().min(5, 'Bio is required'),
+    phone: z.string().min(5, 'Phone is required'),
 });
 
 export default function Profile() {
@@ -97,7 +97,7 @@ export default function Profile() {
                                 <input
                                     type="text"
                                     {...register('phone')}
-                                    name="email"
+                                    name="phone"
                                     className={`form-control ' ${form.errors.phone ? 'is-invalid' : ''} ${isFieldValid('phone') ? 'is-valid' : ''}`}
                                     id="phone"
                                     placeholder="123-456-7890"
