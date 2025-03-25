@@ -7,16 +7,19 @@ export default function User() {
 
     const inputRef = useRef<HTMLInputElement>(null);
     const {data: userData, error, isLoading, isSuccess, refetch} = userAPI.useFetchUserQuery(undefined, {refetchOnMountOrArgChange: true});
+    const [updatePhoto, {data: photoData, error: photoError, isLoading: photoLoading, isSuccess: photoSuccess}] = userAPI.useUpdatePhotoMutation();
 
     const selectImage = () => inputRef.current?.click();
 
 
     const uploadPhoto = async (file: File) => {
+        console.log('file', file.name);
+        console.log('userid', userData.data.user.userId);
         if (file) {
             const form = new FormData();
             form.append('userId', userData.data.user.userId);
             form.append('file', file, file.name);
-            // call API
+            await updatePhoto(form);
         }
     };
 
