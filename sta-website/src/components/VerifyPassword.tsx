@@ -139,7 +139,7 @@ export default function VerifyPassword() {
                                             <div className="input-group has-validation">
                                                 <span className="input-group-text"><i className="bi bi-key"></i></span>
                                                 <input
-                                                    type="text"
+                                                    type="password"
                                                     {...register('newPassword')}
                                                     name="newPassword"
                                                     autoComplete="on"
@@ -155,7 +155,7 @@ export default function VerifyPassword() {
                                             <div className="input-group has-validation">
                                                 <span className="input-group-text"><i className="bi bi-key"></i></span>
                                                 <input
-                                                    type="text"
+                                                    type="password"
                                                     {...register('confirmNewPassword')}
                                                     name="confirmNewPassword"
                                                     autoComplete="on"

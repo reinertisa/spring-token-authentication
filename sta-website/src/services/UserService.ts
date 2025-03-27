@@ -2,7 +2,13 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {IResponse} from "../models/IResponse.ts";
 import {baseUrl, isJsonContentType, processError, processResponse} from "../utils/requestutils.ts";
 import {QrCodeRequest, User} from "../models/IUser.ts";
-import {EmailAddress, IRegisterRequest, IUserRequest, UpdateNewPassword} from "../models/ICredentials.ts";
+import {
+    EmailAddress,
+    IRegisterRequest,
+    IUserRequest,
+    UpdateNewPassword,
+    UpdatePassword
+} from "../models/ICredentials.ts";
 import {Http} from "../enum/http.method.ts";
 
 export const userAPI = createApi({
@@ -102,6 +108,16 @@ export const userAPI = createApi({
                 body: user,
             }),
             transformResponse: processResponse<User>,
+            transformErrorResponse: processError,
+            invalidatesTags: (result, error) => error ? [] : ['User']
+        }),
+        updatePassword: builder.mutation<IResponse<void>, UpdatePassword>({
+            query: (request) => ({
+                url: `/updatepassword`,
+                method: Http.PATCH,
+                body: request,
+            }),
+            transformResponse: processResponse<void>,
             transformErrorResponse: processError,
             invalidatesTags: (result, error) => error ? [] : ['User']
         }),
